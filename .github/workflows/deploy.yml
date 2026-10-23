@@ -1,10 +1,9 @@
-# Publie le site sur GitHub Pages à chaque push sur main.
-# Réglage préalable : Settings > Pages > Build and deployment > Source = « GitHub Actions ».
-name: Déployer sur GitHub Pages
+# Aperçu optionnel du site sur GitHub Pages (le site de production est hébergé chez OVH).
+# Ne se lance qu’à la main : onglet Actions › « Aperçu sur GitHub Pages » › Run workflow.
+# Prérequis : Settings › Pages › Build and deployment › Source = « GitHub Actions ».
+name: Aperçu sur GitHub Pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

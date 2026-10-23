@@ -58,7 +58,7 @@
   --fs-md: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
   --fs-lg: clamp(1.375rem, 1.2rem + 0.8vw, 1.875rem);
   --fs-xl: clamp(2rem, 1.45rem + 2.3vw, 3.5rem);
-  --fs-hero: clamp(2.75rem, 1.3rem + 6.6vw, 6.75rem);
+  --fs-hero: clamp(2.75rem, 1.2rem + 5.6vw, 6.5rem);
 
   --lh-tight: 1.02;
   --lh-snug: 1.2;
@@ -361,7 +361,7 @@ b, strong { font-weight: 650; }
 }
 .nav-toggle .icon { width: 26px; height: 26px; }
 
-@media (max-width: 959.98px) {
+@media (max-width: 1079.98px) {
   .header-inner { gap: var(--space-2xs); }
 
   .js .nav-toggle { display: inline-flex; }
@@ -431,6 +431,7 @@ b, strong { font-weight: 650; }
   line-height: 0.95;
   letter-spacing: -0.045em;
 }
+.nowrap { white-space: nowrap; }
 .marker { position: relative; display: inline-block; white-space: nowrap; }
 .marker-line {
   position: absolute;
@@ -514,6 +515,145 @@ b, strong { font-weight: 650; }
   color: var(--color-ink-soft);
 }
 .section-head--center .section-lead { margin-inline: auto; }
+
+/* ==========================================================================
+   6.0 Tracés « feutre » : soulignés, cercles, flèches, grilles griffonnées.
+   Même direction artistique que le croquis du haut de page. Les tracés se
+   dessinent quand ils entrent à l’écran (main.js ajoute .is-inked).
+   Sans JavaScript ou en mouvement réduit, ils sont simplement affichés.
+   ========================================================================== */
+.ink-path { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+.note-text { font: italic 600 var(--fs-sm)/1.35 var(--font-body); color: var(--color-ink-soft); }
+text.note-text { font-size: 30px; fill: currentColor; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-ink] .ink-path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .js [data-ink].is-inked .ink-path { animation: draw var(--ink-dur, 750ms) var(--ease-out) var(--d, 0s) forwards; }
+  .js [data-ink] .ink-text { opacity: 0; }
+  .js [data-ink].is-inked .ink-text { animation: fade-in 500ms ease var(--d, 0s) forwards; }
+}
+
+/* Marqueurs de mots dans les titres */
+.mk { position: relative; display: inline-block; white-space: nowrap; isolation: isolate; }
+/* max-width: none : ces tracés débordent volontairement du mot qu’ils entourent */
+.mk-svg,
+.marker-line,
+.cycle-ink { max-width: none; }
+.mk-svg { position: absolute; overflow: visible; pointer-events: none; color: var(--color-teal); }
+.mk--under .mk-svg { left: -2%; bottom: -0.17em; width: 104%; height: 0.3em; }
+/* Une ellipse n’entoure un mot qu’à environ 1,41 fois sa taille dans chaque sens */
+.mk--circle .mk-svg { left: -23%; top: -0.4em; width: 146%; height: calc(100% + 0.8em); }
+.mk--round .mk-svg { left: -0.4em; top: -0.26em; width: calc(100% + 0.8em); height: calc(100% + 0.52em); color: var(--color-teal); }
+.mk--hl .mk-svg { left: -0.1em; top: 0.5em; z-index: -1; width: calc(100% + 0.2em); height: 0.56em; color: var(--color-teal-soft); }
+.mk--board .mk-svg { color: var(--color-orange-light); }
+.mk--soft .mk-svg { color: var(--color-teal-soft); }
+
+/* Annotation du hero */
+.hero-note { display: none; }
+@media (min-width: 900px) {
+  .hero-note { display: flex; align-items: flex-end; gap: 0.35rem; margin: 0.35rem 0 0 13.5rem; }
+  .hero-note-arrow { flex: none; width: 4.5rem; height: auto; color: var(--color-ink-soft); overflow: visible; }
+}
+
+/* Annotations autour du puzzle (grands écrans) */
+.puzzle-wrap { position: relative; }
+.puzzle-note { display: none; }
+@media (min-width: 1240px) {
+  .puzzle-note {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    width: calc((100% - min(100%, var(--puzzle-size))) / 2);
+    color: var(--color-ink-soft);
+  }
+  .puzzle-note .note-text { max-width: 12rem; }
+  .puzzle-note--left { left: 0; top: 9%; }
+  .puzzle-note-arrow { width: 100%; height: auto; overflow: visible; }
+  .puzzle-note--right { right: 0; bottom: 20%; padding-left: 1.25rem; }
+  .puzzle-note-spiral { width: 4.5rem; height: auto; overflow: visible; color: var(--color-orange); }
+}
+
+/* Frise : ligne de temps griffonnée, cercle autour du cycle choisi */
+.cycles-track { position: relative; }
+.cycles-line { display: none; }
+@media (min-width: 768px) {
+  .cycles-list::before { display: none; }
+  .cycles-line {
+    position: absolute;
+    top: calc(1.125rem - 12px);
+    left: 1.125rem;
+    display: block;
+    width: calc(80% + 3.25rem);
+    height: 24px;
+    overflow: visible;
+    color: var(--color-teal);
+  }
+  .cycles-list { z-index: 1; }
+}
+.cycle-num { position: relative; }
+.cycle-ink {
+  position: absolute;
+  top: -11px;
+  left: -11px;
+  width: calc(100% + 22px);
+  height: calc(100% + 22px);
+  overflow: visible;
+  color: var(--color-ink);
+  pointer-events: none;
+}
+.cycle-ink .ink-path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.cycle-btn[aria-pressed="true"] .cycle-ink .ink-path { animation: draw 600ms var(--ease-out) forwards; }
+
+/* Grilles griffonnées (cartes « Travailler ensemble », cas client) */
+.sketch-grid { width: 6.5rem; height: 6.5rem; margin-bottom: var(--space-m); overflow: visible; }
+.sketch-grid .sg-line { color: var(--color-ink-soft); stroke-width: 2.6; }
+.sketch-grid .sg-hatch { color: var(--color-teal); stroke-width: 7; }
+.sketch-grid .sg-hatch--board { color: var(--color-orange); }
+.cas .sketch-grid { width: 7.5rem; height: 7.5rem; }
+
+/* Flèche de progression au-dessus des trois façons de travailler */
+.offres-note { display: none; }
+@media (min-width: 900px) {
+  .offres-note { position: relative; display: block; margin: 0 0 var(--space-m); color: var(--color-ink-soft); }
+  .offres-note-arrow { display: block; width: 100%; height: 44px; overflow: visible; }
+  .offres-note .note-text {
+    position: absolute;
+    top: -0.2rem;
+    left: 50%;
+    padding: 0 0.75rem;
+    transform: translateX(-50%);
+    background: var(--color-paper);
+    white-space: nowrap;
+  }
+}
+
+/* Illustrations du Board et du contact : cercle, flèche, annotation */
+.board-ink > g .ink-path { color: var(--color-orange-light); stroke-width: 4.5; }
+.board-ink > .ink-path { color: var(--color-on-dark-muted); stroke-width: 3; }
+.board-ink text.note-text { fill: var(--color-on-dark-muted); }
+.contact-ink { color: var(--color-teal-soft); }
+.contact-ink .ink-path { stroke-width: 3; }
+.contact-ink text.note-text { font-size: 34px; fill: var(--color-teal-soft); }
+
+/* Coche du cas client, cadre du portrait, point d’interrogation de la FAQ */
+.check-ink { display: inline-block; width: 1.3em; height: auto; margin-left: 0.25rem; vertical-align: -0.12em; color: var(--color-teal); overflow: visible; }
+.about-photo { isolation: isolate; }
+.about-frame {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: var(--color-teal);
+  transform: translate(14px, 14px);
+}
+@media (max-width: 899.98px) { .about-frame { transform: translate(9px, 9px); } }
+.faq-doodle { display: none; }
+@media (min-width: 960px) {
+  .faq-doodle { display: block; width: 6rem; height: auto; margin-top: var(--space-l); overflow: visible; color: var(--color-teal); }
+}
 
 /* ---------- 6.1 Les 9 fonctions ---------- */
 .section--fonctions {
@@ -1066,10 +1206,6 @@ b, strong { font-weight: 650; }
   box-shadow: var(--shadow-card);
 }
 .offre--all { border-color: var(--color-teal); box-shadow: inset 0 4px 0 var(--color-teal), var(--shadow-card); }
-.offre-map { width: 5.5rem; height: 5.5rem; margin-bottom: var(--space-m); overflow: visible; }
-.offre-map use { fill: none; stroke: var(--color-line); stroke-width: 1.25px; }
-.offre-map use.is-on { fill: var(--color-teal); stroke: var(--color-teal); }
-.offre-map use.is-board { fill: var(--color-orange); stroke: var(--color-orange); }
 .offre-count {
   margin-bottom: 0.35rem;
   font: 700 var(--fs-xs)/1.4 var(--font-body);
@@ -1090,7 +1226,117 @@ b, strong { font-weight: 650; }
 .offre-details dt:first-child { margin-top: 0; }
 .offre-details dd { margin: 0.2rem 0 0; line-height: 1.5; }
 
-/* ---------- 6.4 FAQ ---------- */
+/* ---------- 6.4 Cas client ---------- */
+.section--cas {
+  background: var(--color-paper-deep);
+  border-block: 1px solid var(--color-line);
+}
+.cas {
+  display: grid;
+  gap: var(--space-xl);
+  padding: clamp(1.5rem, 1rem + 2.5vw, 3rem);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-l);
+  background: var(--color-card);
+  box-shadow: var(--shadow-card);
+}
+@media (min-width: 900px) {
+  .cas { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: var(--space-2xl); }
+}
+.cas-count {
+  margin-bottom: var(--space-2xs);
+  font: 700 var(--fs-xs)/1.4 var(--font-body);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-teal-strong);
+}
+.cas-pieces { display: grid; gap: 0.3rem; margin: 0 0 var(--space-m); padding: 0; list-style: none; }
+.cas-pieces a { color: var(--color-ink); font-weight: 600; text-decoration: none; }
+.cas-pieces a:hover { text-decoration: underline; }
+.cas-story { display: grid; gap: var(--space-l); }
+.cas-step h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: var(--space-xs);
+  font-size: var(--fs-lg);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+.cas-step h3 span { font: 600 var(--fs-xs)/1 var(--font-body); letter-spacing: 0.06em; color: var(--color-teal-strong); }
+.cas-step p { max-width: 42rem; color: var(--color-ink-soft); }
+.cas-step ul { display: grid; gap: 0.45rem; margin: 0; padding: 0; list-style: none; }
+.cas-step li { position: relative; padding-left: 1.5rem; color: var(--color-ink-soft); line-height: 1.5; }
+.cas-step li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.75em;
+  width: 0.75rem;
+  height: 2px;
+  background: var(--color-teal);
+}
+.cas-step li strong { color: var(--color-ink); }
+.cas-step + .cas-step { padding-top: var(--space-l); border-top: 1px solid var(--color-line); }
+
+/* ---------- 6.5 Qui sommes-nous ---------- */
+.about-grid { display: grid; gap: var(--space-xl); align-items: start; }
+@media (min-width: 900px) {
+  .about-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-2xl); }
+  .about-photo { position: sticky; top: calc(var(--header-h) + var(--space-l)); }
+}
+.about-photo { position: relative; margin: 0; max-width: 28rem; }
+.about-photo img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--radius-l);
+  background: var(--color-paper-deep);
+}
+/* La pièce du Board en angle, comme un sceau : rappel du logo */
+.about-badge {
+  position: absolute;
+  top: -1.1rem;
+  right: -1.1rem;
+  width: 4.75rem;
+  height: 4.75rem;
+  overflow: visible;
+  fill: var(--color-orange);
+  stroke: var(--color-paper);
+  stroke-width: 5px;
+  paint-order: stroke;
+  transform: rotate(8deg);
+}
+@media (max-width: 899.98px) {
+  .about-photo { max-width: 21rem; }
+  .about-badge { top: -0.9rem; right: -0.6rem; width: 3.75rem; height: 3.75rem; }
+}
+.about-photo figcaption {
+  position: absolute;
+  left: var(--space-s);
+  right: var(--space-s);
+  bottom: var(--space-s);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-xs) var(--space-s);
+  border-radius: var(--radius-m);
+  background: rgb(247 244 238 / 0.94);
+  font-size: var(--fs-sm);
+  color: var(--color-ink-soft);
+}
+.about-photo figcaption strong { font: 700 var(--fs-md)/1.2 var(--font-display); color: var(--color-ink); }
+.about-lead { font: 500 var(--fs-lg)/1.3 var(--font-display); letter-spacing: -0.015em; margin-bottom: var(--space-m); }
+.about-text > p:not(.kicker):not(.about-lead):not(.about-links) { max-width: 42rem; color: var(--color-ink-soft); }
+.about-quote {
+  margin: var(--space-l) 0;
+  padding: var(--space-s) 0 var(--space-s) var(--space-m);
+  border-left: 3px solid var(--color-orange);
+}
+.about-quote p { font: 500 var(--fs-md)/1.45 var(--font-display); letter-spacing: -0.01em; color: var(--color-ink); }
+.about-quote footer { margin-top: var(--space-2xs); font-size: var(--fs-sm); color: var(--color-ink-soft); }
+
+/* ---------- 6.6 FAQ ---------- */
 .section--faq { padding-top: 0; }
 .faq-grid { display: grid; gap: var(--space-l); }
 @media (min-width: 960px) {
@@ -1124,7 +1370,7 @@ b, strong { font-weight: 650; }
 .faq-item[open] summary .icon { transform: rotate(45deg); }
 .faq-item p { max-width: 40rem; padding-bottom: var(--space-m); color: var(--color-ink-soft); }
 
-/* ---------- 6.5 Contact ---------- */
+/* ---------- 6.7 Contact ---------- */
 .section--contact { padding-top: 0; }
 .contact-panel {
   position: relative;
@@ -1220,6 +1466,12 @@ b, strong { font-weight: 650; }
 @media (min-width: 640px) { .footer-top { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 1024px) { .footer-top { grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr)); } }
 .footer-brand p { max-width: 22rem; margin: var(--space-s) 0 var(--space-m); }
+.footer-brand .footer-slogan {
+  margin: var(--space-m) 0 var(--space-2xs);
+  font: 700 var(--fs-lg)/1.1 var(--font-display);
+  letter-spacing: -0.03em;
+  color: var(--color-on-dark);
+}
 .brand--footer { color: var(--color-on-dark); }
 .brand--footer .brand-mark { --mark-board: var(--color-orange-light); color: var(--color-teal-soft); }
 .footer-title {

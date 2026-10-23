@@ -1,11 +1,11 @@
 # Les Employeurs · site one-page
 
-Site vitrine de **Les Employeurs** (édité par LOGISTEM 2.0) : 9 fonctions supports représentées comme les 9 pièces d’un puzzle, avec le **Board externalisé** en pièce centrale.
+Site vitrine de **Les Employeurs** (édité par LOGISTEM 2.0) : 9 fonctions supports représentées comme les 9 pièces d’un puzzle, avec le **Board externalisé** en pièce centrale. Hébergement : **OVH**.
 
 - 100 % statique : HTML, CSS et JavaScript écrits à la main, **sans dépendance ni étape de build**.
-- **Aucune ressource externe** au chargement. Les polices, les icônes et les illustrations sont servies depuis le dépôt.
+- **Aucune ressource externe** au chargement. Les polices, les icônes, les illustrations et la photo sont servies depuis le site.
 - **Aucun cookie, aucun traceur.** Aucun bandeau de consentement n’est donc nécessaire.
-- Chemins relatifs : le site fonctionne à la racine d’un domaine (`https://les-employeurs.fr/`) comme dans un sous-dossier (`https://aceosolo.github.io/les-employeurs/`).
+- Chemins relatifs : le site fonctionne à la racine d’un domaine comme dans un sous-dossier.
 
 ## Arborescence
 
@@ -14,15 +14,16 @@ index.html                 page unique (tout le contenu est dans le HTML)
 mentions-legales.html
 confidentialite.html       politique de confidentialité (RGPD)
 404.html
-robots.txt, sitemap.xml, .nojekyll
+robots.txt, sitemap.xml
+.htaccess                  configuration du serveur OVH (404, cache, compression, sécurité, HTTPS)
 assets/css/styles.css      styles ; la charte est en tête de fichier
 assets/js/main.js          enrichissements uniquement (le site reste complet sans JS)
 assets/fonts/              Bricolage Grotesque et Instrument Sans (.woff2) et leurs licences
 assets/img/logo.svg        logo autonome, texte vectorisé (pour les usages hors site)
-assets/img/favicon.svg     icône d’onglet
-assets/img/apple-touch-icon.png   icône d’écran d’accueil (iPhone, iPad)
+assets/img/favicon.svg, apple-touch-icon.png   icônes
 assets/img/og-image.png    image de partage (LinkedIn, WhatsApp, Slack…), 1200 × 630
-.github/workflows/deploy.yml   publication automatique sur GitHub Pages
+assets/img/jean-philippe-barret.jpg / .webp    portrait de la section « Qui sommes-nous »
+.nojekyll, .github/workflows/deploy.yml        aperçu optionnel sur GitHub Pages
 ```
 
 ## Tester en local
@@ -31,29 +32,31 @@ assets/img/og-image.png    image de partage (LinkedIn, WhatsApp, Slack…), 1200
 python -m http.server 8000
 ```
 
-Puis ouvrir <http://localhost:8000/>. Sous macOS ou Linux, la commande peut s’appeler `python3`.
+Puis ouvrir <http://localhost:8000/>. Sous macOS ou Linux, la commande peut s’appeler `python3`. Le serveur local ignore le `.htaccess` : la page 404 personnalisée ne s’y affiche pas, c’est normal.
 
 ## Structure de la page
 
-1. **Hero.** Le H1 contient les mots-clés (« Fonctions supports externalisées pour les dirigeants de TPE et PME ») et le slogan « Tout pour entreprendre. ».
-2. **Les 9 fonctions** (`#fonctions`) :
-   - la frise des 5 cycles ;
-   - le puzzle : chaque pièce est un lien vers sa fiche ;
-   - les **9 fiches détaillées**, visibles et indexables, avec un sommaire et un mini-puzzle qui suivent la lecture sur grand écran.
-3. **Le Board externalisé** (`#board`).
-4. **Travailler ensemble** (`#travailler-ensemble`) : une fonction, plusieurs ou toutes.
-5. **FAQ** (`#faq`) : 6 questions en `<details>` natifs.
-6. **Contact** (`#contact`) : « Quelle pièce vous manque ? », rendez-vous, email, téléphone.
-7. **Pied de page** : liens vers les 9 fonctions, les sections, le contact, les partenaires et les pages légales.
+| # | Section | Ancre |
+|---|---|---|
+| | Hero : H1 avec mots-clés et slogan « Tout pour entreprendre. » | `#accueil` |
+| 01 | Les 9 fonctions : frise des 5 cycles, puzzle, 9 fiches détaillées avec sommaire | `#fonctions` |
+| 02 | Le Board externalisé | `#board` |
+| 03 | Travailler ensemble : une fonction, plusieurs ou toutes | `#travailler-ensemble` |
+| 04 | Cas client : Agence Coïncidence | `#cas-client` |
+| 05 | Qui sommes-nous : Jean-Philippe Barret | `#qui-sommes-nous` |
+| 06 | FAQ (6 questions en `<details>` natifs) | `#faq` |
+| 07 | Contact : « Quelle pièce vous manque ? » | `#contact` |
+
+Le menu compte 6 liens (Les 9 fonctions, Le Board, Cas client, Qui sommes-nous, FAQ, Contact). Il se replie en bouton « Menu » sous 1080 px de large. « Travailler ensemble » est accessible par le défilement et le pied de page.
 
 ## Le puzzle et sa numérotation en escargot
 
 Les pièces sont numérotées **en escargot**, dans le sens des aiguilles d’une montre depuis le coin haut gauche. Le Board, au centre, ferme la boucle en 09 :
 
 ```
-01 QVCT & RSE            02 Direction & Stratégie   03 Ressources Humaines
-08 Achat & Fournisseurs  09 Board externalisé       04 Santé Sécurité
-07 Informatique & Digital 06 Commerce & Marketing   05 Finance & Gestion
+01 QVCT & RSE             02 Direction & Stratégie   03 Ressources Humaines
+08 Achat & Fournisseurs   09 Board externalisé       04 Santé Sécurité
+07 Informatique & Digital 06 Commerce & Marketing    05 Finance & Gestion
 ```
 
 Les pièces sont écrites dans le HTML **dans cet ordre**, et la touche Tab suit donc l’escargot. Chaque `<li class="puzzle-slot">` est placé dans la grille par son `style="grid-area: ligne / colonne"`. L’animation d’entrée suit le même ordre, le Board en dernier. Sur chaque pièce, `--i` fixe le rang et `--sx` / `--sy` la direction d’arrivée.
@@ -80,7 +83,7 @@ Chaque fonction apparaît à **quatre endroits** :
 
 Identifiants : `qvct`, `strategie`, `rh`, `sante`, `finance`, `commerce`, `digital`, `achats`, `board`.
 
-Les formes des pièces sont définies **une seule fois**, dans le sprite SVG en haut de `index.html` (`<path id="pz-…">`). Elles sont réutilisées partout via `<use>`. Ne modifiez pas leurs attributs `d="…"` : ce sont des arcs de cercle calculés pour que tenons et mortaises s’emboîtent avec un joint constant.
+Les formes des pièces sont définies **une seule fois**, dans le sprite SVG en haut de `index.html` (`<path id="pz-…">`). Elles sont réutilisées partout via `<use>` : puzzle, sommaire, illustrations, mini-puzzle du cas client. Ne modifiez pas leurs attributs `d="…"` : ce sont des arcs de cercle calculés pour que tenons et mortaises s’emboîtent avec un joint constant.
 
 ### Les cycles
 
@@ -90,15 +93,56 @@ La correspondance cycle → pièces est écrite à **trois endroits**, à garder
 2. Le texte de la frise (`.cycle-pieces`).
 3. Les étiquettes « Cycles concernés » de chaque fiche.
 
+### Cas client
+
+La section `#cas-client` présente l’accompagnement de l’Agence Coïncidence en trois temps : situation, actions, résultat. Le mini-puzzle allume les pièces mobilisées : ajoutez ou retirez `class="is-on"` sur les `<use>` de `.cas-map`, et mettez à jour la liste `.cas-pieces`. Pour un second cas client, dupliquez le bloc `<div class="cas">`.
+
+### Qui sommes-nous
+
+La section présente Jean-Philippe Barret en **entrepreneur** : chef d’entreprise, homme de terrain, créateur et dirigeant de plusieurs entreprises, avec sa citation sur l’entrepreneuriat. Elle ne mentionne volontairement rien de son activité santé-sécurité.
+
+Le portrait existe en deux formats, WebP et JPEG, au même cadrage (640 × 800). Pour le remplacer, gardez ce ratio 4:5 et les mêmes noms de fichiers. Le cadre griffonné derrière la photo est `.about-frame`, la pièce orange en angle `.about-badge`.
+
+### Les tracés « feutre »
+
+Tout le site reprend la direction artistique du croquis du haut de page : traits de feutre qui se dessinent, annotations manuscrites, grilles hachurées.
+
+**Comment ça marche.** Tout élément portant l’attribut `data-ink` se dessine quand il entre à l’écran : `main.js` lui ajoute la classe `is-inked`, et les traits `.ink-path` se tracent. Sans JavaScript ou avec `prefers-reduced-motion`, ils s’affichent directement.
+
+**Mots marqués dans les titres.**
+
+| Classe | Effet | Exemple |
+|---|---|---|
+| `.mk--under` | soulignés | « à vos côtés », « remettre de l’ordre », « vos questions », « entreprendre » |
+| `.mk--circle` | entourés | « vous choisissez », « vous manque » |
+| `.mk--round` | entouré, pour un seul caractère | le « 9 » |
+| `.mk--hl` | surligné | « entrepreneurs » |
+
+Les modificateurs `.mk--board` (orange clair) et `.mk--soft` (sarcelle clair) servent sur les fonds sombres. Pour marquer un autre mot, copiez un `<span class="mk …" data-ink>` existant, SVG compris, autour du nouveau mot. Le tracé s’adapte à la longueur du mot.
+
+**Annotations et dessins.**
+- **Hero** : flèche « les 9 pièces, juste en dessous ».
+- **Puzzle** (écrans ≥ 1240 px) : « cliquez sur une pièce », et la spirale de l’escargot.
+- **Frise** : ligne de temps griffonnée, et un cercle qui se dessine autour du cycle choisi (`.cycle-ink`).
+- **Board** : cercle autour de la pièce centrale, « cinq experts, une seule table ».
+- **Travailler ensemble** et **cas client** : flèche « et vous pouvez ajouter des pièces en chemin » et grilles hachurées (`.sketch-grid`). Une case hachurée = une pièce confiée, en orange pour le Board.
+- **Cas client** : une coche sur « Ce qui a changé ».
+- **Qui sommes-nous** : cadre autour du portrait.
+- **FAQ** : point d’interrogation.
+- **Contact** : « celle-ci ? » et une flèche vers la pièce manquante.
+- **Pied de page** : slogan souligné.
+
+Ces tracés sont des courbes générées pour avoir l’air faits à la main. Pour en changer la forme, il faut les redessiner ; leur couleur et leur épaisseur se règlent dans la section 6.0 de `styles.css`.
+
 ### Partenaires
 
 - **Secutop** (Santé Sécurité) : lien vers <https://www.secutop.fr/> dans sa fiche et dans le pied de page.
-- **Gingerence** (QVCT & RSE) et **Sinolx** (Informatique & Digital) : affichés sans lien. Aucun site n’a été trouvé en ligne. Pour ajouter un lien, reprenez le balisage du lien Secutop dans la fiche (`.fn-partner`) et dans le pied de page (`.footer-partners`).
+- **Gingerence** (QVCT & RSE) et **Sinolx** (Informatique & Digital) : affichés sans lien. Pour en ajouter un, reprenez le balisage du lien Secutop dans la fiche (`.fn-partner`) et dans le pied de page (`.footer-partners`).
 
 ### Autres contenus
 
 - Pages légales : `mentions-legales.html` et `confidentialite.html`.
-- Référencement : `<title>`, `meta description`, Open Graph et JSON-LD (`ProfessionalService`, avec raison sociale, TVA et adresse) en tête de `index.html`.
+- Référencement : `<title>`, `meta description`, Open Graph et JSON-LD (`ProfessionalService` avec raison sociale, TVA, adresse et fondateur) en tête de `index.html`.
 - Copyright : l’année est écrite en dur dans les pieds de page (`© 2026`).
 
 ## Modifier la charte
@@ -119,47 +163,47 @@ Toutes les valeurs sont des variables CSS du bloc `:root`, au début de `assets/
 
 **Contrastes (WCAG AA).** L’orange de départ `#C4501F` n’atteignait que 4,24:1 avec un texte clair. Il a été foncé en `#B94A1C` (4,71:1). Toutes les associations texte/fond sont au-dessus de 4,5:1.
 
-**Polices.** Bricolage Grotesque (titres) et Instrument Sans (texte) sont des polices libres (SIL Open Font License 1.1). Elles sont déclarées en `@font-face` en tête de `styles.css`.
+**Polices.** Bricolage Grotesque (titres) et Instrument Sans (texte) sont des polices libres (SIL Open Font License 1.1), déclarées en `@font-face` en tête de `styles.css`.
 
 **Logo.** La marque est une grille 3×3 dont la pièce centrale orange, à quatre tenons, est le Board. Elle existe sous plusieurs formes :
-- le symbole `#logo-mark` du sprite SVG de chaque page : en-têtes et pied de page, couleur pilotée par CSS ;
-- `assets/img/logo.svg` : marque et texte vectorisé ;
-- `favicon.svg` et `apple-touch-icon.png` : icônes ;
-- `og-image.png` : image de partage. Vous pouvez la remplacer par un visuel de votre choix, au même nom et au format 1200 × 630.
+- le symbole `#logo-mark` du sprite SVG de chaque page ;
+- `logo.svg` ;
+- `favicon.svg` et `apple-touch-icon.png` ;
+- `og-image.png`, que vous pouvez remplacer au même nom et au format 1200 × 630.
 
-## Publier sur GitHub Pages
+## Mise en ligne chez OVH
 
-Le dépôt est `github.com/AceOSolo/les-employeurs`.
+1. **Certificat SSL.** Dans l’espace client OVH : *Web Cloud › Hébergements › votre hébergement › Multisite*. Vérifiez que `les-employeurs.fr` et `www.les-employeurs.fr` pointent vers le dossier `www` et que le **SSL** est activé (certificat Let’s Encrypt gratuit).
+2. **Envoi des fichiers.** Par FTP, avec FileZilla et les identifiants de l’onglet *FTP - SSH* de l’hébergement. Déposez dans le dossier `www/` :
+   - `index.html`, `mentions-legales.html`, `confidentialite.html`, `404.html` ;
+   - `robots.txt`, `sitemap.xml`, `.htaccess` ;
+   - le dossier `assets/` complet.
 
-1. Sur GitHub : **Settings › Pages › Build and deployment › Source : « GitHub Actions »**. Tant que ce réglage n’est pas fait, le workflow échoue à l’étape « Configurer GitHub Pages ».
-2. Poussez sur `main`, ou relancez le dernier run dans l’onglet **Actions**. Le workflow publie uniquement les fichiers du site : le README et le workflow ne sont pas mis en ligne.
-3. Le site est en ligne sur `https://aceosolo.github.io/les-employeurs/`.
+   N’envoyez pas `README.md`, `.github/`, `.git/` ni `.nojekyll`. Le `.htaccess` commence par un point : dans FileZilla, activez *Serveur › Forcer l’affichage des fichiers cachés* pour le voir.
+3. **HTTPS.** Une fois le certificat actif, ouvrez `.htaccess` et retirez le `#` devant les 4 lignes du bloc « HTTPS et adresse unique ». Tout le trafic est alors redirigé vers `https://les-employeurs.fr/`, sans www. Testez `http://les-employeurs.fr` et `https://www.les-employeurs.fr` : les deux doivent aboutir sur `https://les-employeurs.fr/`.
 
-**Nom de domaine `les-employeurs.fr`.**
+**Ce que fait le `.htaccess`.**
+- Il affiche `404.html` pour toute adresse inconnue. Un petit script de cette page corrige les chemins quelle que soit la profondeur de l’adresse.
+- Il déclare les types de fichiers récents (`.woff2`, `.webp`).
+- Il active la compression et le cache navigateur : HTML toujours frais, polices et images mises en cache.
+- Il ajoute des en-têtes de sécurité (`nosniff`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`).
 
-1. **Settings › Pages › Custom domain** : saisissez `les-employeurs.fr`.
-2. Chez le registraire, créez les enregistrements DNS indiqués par la documentation GitHub (« Managing a custom domain for your GitHub Pages site ») :
-   - quatre `A` vers `185.199.108.153`, `185.199.109.153`, `185.199.110.153` et `185.199.111.153` ;
-   - un `CNAME` `www` vers `aceosolo.github.io`.
-3. Cochez **Enforce HTTPS** une fois le domaine vérifié.
+Chaque bloc optionnel est protégé par `<IfModule>`.
 
-**À savoir.** `canonical`, `og:url`, l’image Open Graph, le JSON-LD, `sitemap.xml` et `robots.txt` pointent déjà vers `https://les-employeurs.fr/`.
+**Aperçu sur GitHub Pages (optionnel).** Le workflow `.github/workflows/deploy.yml` ne se lance plus automatiquement. Pour un aperçu sur `https://aceosolo.github.io/les-employeurs/`, activez *Settings › Pages › Source : GitHub Actions*, puis *Actions › Aperçu sur GitHub Pages › Run workflow*.
 
 ## Placeholders restants
-
-Faites un rechercher-remplacer sur tout le projet. Pour les lister :
-
-```bash
-grep -rn "\[[A-Z_]*\]" --include=*.html .
-```
 
 | Placeholder | Où | Remarque |
 |---|---|---|
 | `[URL_RDV]` | `index.html` (13 occurrences) | lien de l’outil de prise de rendez-vous, ouvert dans un nouvel onglet |
 | `[OUTIL_RDV]` | `confidentialite.html` | nom de cet outil, déclaré comme sous-traitant |
-| `[TELEPHONE_HEBERGEUR]` | `mentions-legales.html` | GitHub ne publie aucun numéro officiel. Seul numéro trouvé : +1 877 448 4820, sur un annuaire tiers, non vérifié (voir « Pistes d’amélioration ») |
 
-Toutes les autres informations sont renseignées. Les données légales de LOGISTEM 2.0 ont été recoupées sur l’API Sirene, le BODACC et Société.com le 23/10/2026.
+Pour les lister : `grep -rn "\[[A-Z_]*\]" --include=*.html .`
+
+Toutes les autres informations sont renseignées. Sources :
+- **LOGISTEM 2.0** : API Sirene, BODACC et Société.com, le 23/10/2026.
+- **OVH** : leurs mentions légales officielles pour l’identité et l’adresse. Le numéro 09 72 10 10 07 vient du forum communautaire officiel d’OVHcloud ; leur page de mentions légales n’en affiche aucun.
 
 ## Obligations légales
 
@@ -179,51 +223,49 @@ Toutes les autres informations sont renseignées. Les données légales de LOGIS
 
 - **Principal** : *fonctions supports externalisées*, ciblé dans le `title`, le H1, le H2 du puzzle, la FAQ et le JSON-LD.
 - **Secondaires**, un par fiche via le titre et le sous-titre `.fn-seo` : *RH externalisées*, *Board externalisé*, *gestion financière externalisée*, *DUERP / prévention des risques*, *démarche RSE / QVCT*, *achats externalisés*, *conseil en stratégie pour dirigeants*, *développement commercial*, *transformation digitale*.
-- **Cible** : *dirigeants de TPE et PME*.
+- **Confiance** : la section « Qui sommes-nous » et le fondateur déclaré dans le JSON-LD (avec son profil LinkedIn) renforcent l’expertise perçue par les moteurs. Le cas client ajoute un exemple concret.
+- **Local** : le siège à Culin (Nord-Isère) est mentionné dans « Qui sommes-nous » et dans le JSON-LD.
 
 ## Pistes d’amélioration
 
-Classées par priorité.
+**Déjà fait** : hébergement OVH, section « Qui sommes-nous », cas client.
 
-**Avant la mise en ligne**
+**Plus tard**, selon vos réponses du 23/10/2026 :
 
-1. **Agenda en lien sortant.** Choisissez l’outil de rendez-vous, puis remplacez `[URL_RDV]` et `[OUTIL_RDV]`. Gardez-le en lien sortant : un agenda intégré dans la page (iframe) déposerait des cookies et imposerait un bandeau.
-2. **Adresse email au nom du domaine.** Préférez une adresse en `@les-employeurs.fr` (par exemple `contact@`) à l’adresse `@logistem.fr` : cohérence de marque, et vous pourrez changer de destinataire sans toucher au site. Configurez SPF, DKIM et DMARC pour éviter les spams. Un email et un mobile publiés en clair attirent aussi le démarchage : une ligne dédiée peut valoir le coup.
-3. **Google Search Console.** Validez le domaine par un enregistrement DNS (aucun script sur le site) et soumettez `sitemap.xml`. C’est gratuit, sans cookie, et c’est la seule façon de voir sur quelles recherches vous apparaissez.
-4. **Hébergeur.** GitHub ne publie aucun numéro de téléphone. Sa documentation (« GitHub Pages limits ») précise aussi que Pages n’est pas destiné à servir d’hébergement gratuit pour faire tourner une activité en ligne (« online business »), une boutique ou un site dont l’objet principal est de faciliter des transactions commerciales. Un site vitrine de société se situe dans une zone grise. Un hébergeur français de site statique réglerait d’un coup le téléphone manquant et le transfert de données hors UE de la politique de confidentialité. Les fichiers sont prêts à être déposés n’importe où.
-
-**Crédibilité et conversion**
-
-5. **Mettre des visages.** Ajoutez une section « Qui sommes-nous » : Jean-Philippe Barret et les experts du Board, avec photo, parcours et lien LinkedIn. En conseil B2B, on achète d’abord des personnes. C’est le levier de conversion le plus fort qui manque aujourd’hui.
-6. **Preuves réelles.** Ajoutez deux ou trois témoignages ou cas concrets, idéalement un par cycle, avec l’accord des clients, et les logos des partenaires s’ils l’autorisent.
-7. **Repères de prix.** Indiquez le mode d’intervention (forfait, jours, abonnement) ou au moins une fourchette, et ajoutez une question « Combien ça coûte ? » à la FAQ. Sans repère, beaucoup de dirigeants n’osent pas prendre rendez-vous.
-8. **Zone d’intervention.** Précisez-la : Nord-Isère, Lyon, Auvergne-Rhône-Alpes, France entière, à distance ? Pour une TPE ou une PME, c’est le levier SEO le plus rentable. Ajoutez une fiche Google Business Profile au siège de Culin.
-
-**Ensuite**
-
-9. Valider les mots-clés avec de vrais volumes (Semrush rechargé, ou Search Console après 4 à 6 semaines). À terme, créer une page par fonction.
-10. Créer une page LinkedIn entreprise et l’ajouter en `sameAs` dans le JSON-LD.
-11. **Mesure d’audience.** Si vous en voulez une, choisissez un outil configuré selon l’exemption CNIL (sans consentement), et mettez à jour la politique de confidentialité.
-12. **Marque et partenaires.** Vérifiez la disponibilité de « Les Employeurs » à l’INPI avant d’investir dans la marque. Formalisez avec les partenaires l’usage de leur nom et, le cas échéant, le partage de données clients (à ajouter alors aux destinataires dans la politique de confidentialité).
+1. **Agenda en lien sortant.** Choisissez l’outil, puis remplacez `[URL_RDV]` et `[OUTIL_RDV]`. Gardez-le en lien sortant : intégré dans la page, il déposerait des cookies et imposerait un bandeau.
+2. **Adresse email au nom du domaine** (`contact@les-employeurs.fr`), avec SPF, DKIM et DMARC. OVH les configure depuis l’espace client si le domaine y est.
+3. **Google Search Console** : validation par DNS et soumission de `sitemap.xml`.
+4. **Repères de prix**, quand vous serez prêts : mode d’intervention ou fourchette, et une question dans la FAQ.
+5. **Zone d’intervention et Google Business Profile** (siège de Culin).
+6. **Ensuite** :
+   - vérifier les mots-clés avec de vrais volumes ;
+   - créer une page LinkedIn entreprise, à ajouter en `sameAs` dans le JSON-LD ;
+   - vérifier la marque à l’INPI ;
+   - formaliser avec les partenaires l’usage de leur nom ;
+   - une page par fonction à terme.
+7. **Sécurité avancée** : une fois le HTTPS forcé et stable, ajouter un en-tête HSTS dans `.htaccess`. Une politique CSP est aussi possible, mais demande de lister les scripts en ligne (voir le script de la balise `<head>`).
 
 ## À valider
 
-- **Répartition des pièces par cycle**, marquée « À VALIDER » dans le brief, reprise telle quelle.
+- **« Qui sommes-nous ».** Les « 30 ans de terrain » et la citation viennent de la page auteurs de secutop.fr, comme la photo. Sont à confirmer :
+  - le titre « Fondateur des Employeurs » ;
+  - « a créé et dirige plusieurs entreprises » (LOGISTEM 2.0 et Secutop) ;
+  - les paragraphes sur son quotidien de dirigeant et la genèse des Employeurs.
+- **Répartition des pièces par cycle**, marquée « À VALIDER » dans le brief.
 - **Textes rédigés** : fiches, Board, « Travailler ensemble », FAQ, contact.
 - **Politique de confidentialité** : durées de conservation (alignées sur la CNIL), bases légales, sous-traitants.
 - **Logo** : version « clé de voûte », provisoire.
 
-Conformément au brief, le site ne contient ni chiffre, ni témoignage, ni logo client, ni certification, ni référence inventés.
-
 ## Vérifications effectuées (23 octobre 2026)
 
-Site servi en local et piloté dans Chrome (Puppeteer) : 64 contrôles, tous réussis.
+Site servi en local et piloté dans Chrome (Puppeteer) : 68 contrôles, tous réussis.
 
-- **Affichage** à 360, 768 et 1280 px : pas de défilement horizontal, texte contenu dans le cœur de chaque pièce.
+- **Affichage** à 360, 768 et 1280 px (et vérification visuelle à 900 et 1100 px) : pas de défilement horizontal, texte contenu dans le cœur de chaque pièce.
 - **Puzzle** : numérotation en escargot, formes dans leur case, ordre de tabulation et fiches dans l’ordre 01 → 09.
+- **Nouvelles sections** : cas client et « Qui sommes-nous » en place, sans aucune mention santé-sécurité dans le portrait. Photo chargée (WebP), menu actif correct, y compris en haut de page.
+- **Tracés « feutre »** : les 22 tracés sont cachés au chargement et tous dessinés après défilement. Ils sont visibles d’emblée sans JavaScript. Ils ne créent aucun défilement horizontal, même sur mobile.
 - **Réseau** : aucune erreur, aucune ressource en échec, aucune requête externe. Les polices auto-hébergées sont chargées.
 - **Clavier et souris** : focus visible partout, Entrée sur une pièce mène à sa fiche, la zone cliquable suit la vraie forme des pièces.
-- **Filtre** : les 5 cycles mettent en avant les bonnes pièces.
-- **Fiches** : le sommaire suit la lecture, la FAQ s’ouvre et se ferme.
 - **Dégradés** : sans JavaScript et avec `prefers-reduced-motion`, contenu complet et puzzle assemblé.
 - **Pages secondaires** : mentions légales, confidentialité et 404 vérifiées. HTML validé avec html-validate.
+- **Non testé** : le `.htaccess` (pas d’Apache en local). Ses directives sont standard et protégées par `<IfModule>`, mais vérifiez le site juste après l’envoi sur OVH.

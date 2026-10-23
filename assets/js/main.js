@@ -36,7 +36,7 @@
       }
     });
     window.addEventListener('resize', function () {
-      if (window.innerWidth >= 960) setNav(false);
+      if (window.innerWidth >= 1080) setNav(false);
     });
   }
 
@@ -60,9 +60,9 @@
         });
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
-    navLinks.forEach(function (link) {
-      var section = document.getElementById(link.getAttribute('href').slice(1));
-      if (section) sectionObserver.observe(section);
+    // Toutes les sections sont suivies : une section absente du menu (hero, FAQ…) éteint le lien actif.
+    toArray(document.querySelectorAll('main > section[id]')).forEach(function (section) {
+      sectionObserver.observe(section);
     });
   }
 
@@ -128,6 +128,23 @@
       setCycle(isActive && cycle !== 'all' ? 'all' : cycle);
     });
   });
+
+  /* ---------- 5b. Tracés « feutre » : ils se dessinent à l’entrée dans l’écran ---------- */
+  var inks = toArray(document.querySelectorAll('[data-ink]'));
+  if (inks.length) {
+    if (hasIO && !reduceMotion()) {
+      var inkObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-inked');
+          inkObserver.unobserve(entry.target);
+        });
+      }, { threshold: 0.5, rootMargin: '0px 0px -6% 0px' });
+      inks.forEach(function (el) { inkObserver.observe(el); });
+    } else {
+      inks.forEach(function (el) { el.classList.add('is-inked'); });
+    }
+  }
 
   /* ---------- 6. Fiches : sommaire et mini-puzzle suivent la lecture ---------- */
   var articles = toArray(document.querySelectorAll('.fn[id]'));
