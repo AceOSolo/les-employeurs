@@ -1,6 +1,6 @@
 # Les Employeurs · site one-page
 
-Site vitrine de **Les Employeurs** (édité par LOGISTEM 2.0) : 9 fonctions supports représentées comme les 9 pièces d’un puzzle, avec le **Board externalisé** en pièce centrale. Hébergement : **OVH**.
+Site vitrine de **Les Employeurs** (édité par LOGISTEM 2.0) : 9 fonctions supports représentées comme les 9 pièces d’un puzzle, avec le **Board externalisé** en pièce centrale. Hébergement : **GitHub Pages** ; nom de domaine chez **OVH**.
 
 - 100 % statique : HTML, CSS et JavaScript écrits à la main, **sans dépendance ni étape de build**.
 - **Aucune ressource externe** au chargement. Les polices, les icônes, les illustrations et la photo sont servies depuis le site.
@@ -15,7 +15,6 @@ mentions-legales.html
 confidentialite.html       politique de confidentialité (RGPD)
 404.html
 robots.txt, sitemap.xml
-.htaccess                  configuration du serveur OVH (404, cache, compression, sécurité, HTTPS)
 assets/css/styles.css      styles ; la charte est en tête de fichier
 assets/js/main.js          enrichissements uniquement (le site reste complet sans JS)
 assets/fonts/              Bricolage Grotesque et Instrument Sans (.woff2) et leurs licences
@@ -23,7 +22,8 @@ assets/img/logo.svg        logo autonome, texte vectorisé (pour les usages hors
 assets/img/favicon.svg, apple-touch-icon.png   icônes
 assets/img/og-image.png    image de partage (LinkedIn, WhatsApp, Slack…), 1200 × 630
 assets/img/jean-philippe-barret.jpg / .webp    portrait de la section « Qui sommes-nous »
-.nojekyll, .github/workflows/deploy.yml        aperçu optionnel sur GitHub Pages
+CNAME                      domaine personnalisé GitHub Pages (les-employeurs.fr)
+.nojekyll                  désactive Jekyll : GitHub Pages sert les fichiers tels quels
 ```
 
 ## Tester en local
@@ -32,7 +32,7 @@ assets/img/jean-philippe-barret.jpg / .webp    portrait de la section « Qui som
 python -m http.server 8000
 ```
 
-Puis ouvrir <http://localhost:8000/>. Sous macOS ou Linux, la commande peut s’appeler `python3`. Le serveur local ignore le `.htaccess` : la page 404 personnalisée ne s’y affiche pas, c’est normal.
+Puis ouvrir <http://localhost:8000/>. Sous macOS ou Linux, la commande peut s’appeler `python3`. Le serveur local n’affiche pas la page 404 personnalisée ; GitHub Pages, si.
 
 ## Structure de la page
 
@@ -171,26 +171,16 @@ Toutes les valeurs sont des variables CSS du bloc `:root`, au début de `assets/
 - `favicon.svg` et `apple-touch-icon.png` ;
 - `og-image.png`, que vous pouvez remplacer au même nom et au format 1200 × 630.
 
-## Mise en ligne chez OVH
+## Mise en ligne (GitHub Pages, domaine chez OVH)
 
-1. **Certificat SSL.** Dans l’espace client OVH : *Web Cloud › Hébergements › votre hébergement › Multisite*. Vérifiez que `les-employeurs.fr` et `www.les-employeurs.fr` pointent vers le dossier `www` et que le **SSL** est activé (certificat Let’s Encrypt gratuit).
-2. **Envoi des fichiers.** Par FTP, avec FileZilla et les identifiants de l’onglet *FTP - SSH* de l’hébergement. Déposez dans le dossier `www/` :
-   - `index.html`, `mentions-legales.html`, `confidentialite.html`, `404.html` ;
-   - `robots.txt`, `sitemap.xml`, `.htaccess` ;
-   - le dossier `assets/` complet.
+Le site est publié par **GitHub Pages** directement depuis la branche `main`, à la racine du dépôt (*Settings › Pages › Source : Deploy from a branch*). Il n’y a ni build ni workflow : **chaque push sur `main` met le site à jour en ligne** en une à deux minutes.
 
-   N’envoyez pas `README.md`, `.github/`, `.git/` ni `.nojekyll`. Le `.htaccess` commence par un point : dans FileZilla, activez *Serveur › Forcer l’affichage des fichiers cachés* pour le voir.
-3. **HTTPS.** Une fois le certificat actif, ouvrez `.htaccess` et retirez le `#` devant les 4 lignes du bloc « HTTPS et adresse unique ». Tout le trafic est alors redirigé vers `https://les-employeurs.fr/`, sans www. Testez `http://les-employeurs.fr` et `https://www.les-employeurs.fr` : les deux doivent aboutir sur `https://les-employeurs.fr/`.
-
-**Ce que fait le `.htaccess`.**
-- Il affiche `404.html` pour toute adresse inconnue. Un petit script de cette page corrige les chemins quelle que soit la profondeur de l’adresse.
-- Il déclare les types de fichiers récents (`.woff2`, `.webp`).
-- Il active la compression et le cache navigateur : HTML toujours frais, polices et images mises en cache.
-- Il ajoute des en-têtes de sécurité (`nosniff`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`).
-
-Chaque bloc optionnel est protégé par `<IfModule>`.
-
-**Aperçu sur GitHub Pages (optionnel).** Le workflow `.github/workflows/deploy.yml` ne se lance plus automatiquement. Pour un aperçu sur `https://aceosolo.github.io/les-employeurs/`, activez *Settings › Pages › Source : GitHub Actions*, puis *Actions › Aperçu sur GitHub Pages › Run workflow*.
+- **Domaine.** Le fichier `CNAME` contient `les-employeurs.fr`. Chez OVH (zone DNS du domaine), il faut :
+  - quatre enregistrements `A` vers `185.199.108.153`, `185.199.109.153`, `185.199.110.153` et `185.199.111.153` ;
+  - un `CNAME` `www` vers `aceosolo.github.io`.
+- **HTTPS.** Dès que GitHub a émis le certificat, cochez **Enforce HTTPS** dans *Settings › Pages*. Au 23/10/2026, l’option n’était pas encore activée.
+- **Page 404.** GitHub Pages sert `404.html` pour toute adresse inconnue. Un petit script de cette page corrige les chemins, quelle que soit la profondeur de l’adresse.
+- **Fichiers publics.** Avec ce mode de publication, tout le dépôt est servi, README compris. C’est sans conséquence : le dépôt est déjà public.
 
 ## Placeholders restants
 
@@ -203,7 +193,7 @@ Pour les lister : `grep -rn "\[[A-Z_]*\]" --include=*.html .`
 
 Toutes les autres informations sont renseignées. Sources :
 - **LOGISTEM 2.0** : API Sirene, BODACC et Société.com, le 23/10/2026.
-- **OVH** : leurs mentions légales officielles pour l’identité et l’adresse. Le numéro 09 72 10 10 07 vient du forum communautaire officiel d’OVHcloud ; leur page de mentions légales n’en affiche aucun.
+- **GitHub (hébergeur)** : l’adresse vient de sa politique de confidentialité officielle. GitHub ne publie aucun numéro de téléphone. Le +1 877 448 4820 indiqué dans les mentions légales est son ancien numéro commercial, relevé sur un annuaire tiers : c’est l’usage courant pour les sites hébergés sur GitHub Pages, mais il n’est pas confirmé par GitHub.
 
 ## Obligations légales
 
@@ -228,7 +218,7 @@ Toutes les autres informations sont renseignées. Sources :
 
 ## Pistes d’amélioration
 
-**Déjà fait** : hébergement OVH, section « Qui sommes-nous », cas client.
+**Déjà fait** : mise en ligne sur GitHub Pages avec le domaine OVH, section « Qui sommes-nous », cas client.
 
 **Plus tard**, selon vos réponses du 23/10/2026 :
 
@@ -243,7 +233,7 @@ Toutes les autres informations sont renseignées. Sources :
    - vérifier la marque à l’INPI ;
    - formaliser avec les partenaires l’usage de leur nom ;
    - une page par fonction à terme.
-7. **Sécurité avancée** : une fois le HTTPS forcé et stable, ajouter un en-tête HSTS dans `.htaccess`. Une politique CSP est aussi possible, mais demande de lister les scripts en ligne (voir le script de la balise `<head>`).
+7. **Activer Enforce HTTPS** dans *Settings › Pages* dès que le certificat est disponible.
 
 ## À valider
 
@@ -268,4 +258,3 @@ Site servi en local et piloté dans Chrome (Puppeteer) : 68 contrôles, tous ré
 - **Clavier et souris** : focus visible partout, Entrée sur une pièce mène à sa fiche, la zone cliquable suit la vraie forme des pièces.
 - **Dégradés** : sans JavaScript et avec `prefers-reduced-motion`, contenu complet et puzzle assemblé.
 - **Pages secondaires** : mentions légales, confidentialité et 404 vérifiées. HTML validé avec html-validate.
-- **Non testé** : le `.htaccess` (pas d’Apache en local). Ses directives sont standard et protégées par `<IfModule>`, mais vérifiez le site juste après l’envoi sur OVH.
