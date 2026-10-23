@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- GitHub Pages sert cette page pour toute adresse inconnue, quelle que soit sa profondeur.
+       Ce script fixe la base des chemins relatifs : /nom-du-depot/ sur *.github.io, sinon la racine du domaine.
+       Sans JavaScript, les chemins relatifs fonctionnent pour les adresses d’un seul niveau. -->
+  <script>
+    (function () {
+      if (/\/404\.html$/.test(location.pathname)) return; // page ouverte directement : rien à corriger
+      var segment = location.pathname.split('/')[1];
+      var base = /\.github\.io$/.test(location.hostname) && segment ? '/' + segment + '/' : '/';
+      var el = document.createElement('base');
+      el.href = base;
+      document.head.appendChild(el);
+    })();
+  </script>
+  <title>Page introuvable · Les Employeurs</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#F7F4EE">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <header class="page-header">
+    <div class="container header-inner">
+      <a class="brand" href="./">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="0" y="0" width="9" height="9" rx="1.6"/><rect x="11.5" y="0" width="9" height="9" rx="1.6"/><rect x="23" y="0" width="9" height="9" rx="1.6"/>
+          <rect x="0" y="11.5" width="9" height="9" rx="1.6"/><rect class="brand-mark-board" x="11.5" y="11.5" width="9" height="9" rx="1.6"/><rect x="23" y="11.5" width="9" height="9" rx="1.6"/>
+          <rect x="0" y="23" width="9" height="9" rx="1.6"/><rect x="11.5" y="23" width="9" height="9" rx="1.6"/><rect x="23" y="23" width="9" height="9" rx="1.6"/>
+        </svg>
+        <span class="brand-name">Les Employeurs</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="contenu" class="container notfound">
+    <svg class="mini-grid" viewBox="0 0 34 34" aria-hidden="true" focusable="false">
+      <rect class="is-on" x="1" y="1" width="8" height="8" rx="1.5"/><rect class="is-on" x="13" y="1" width="8" height="8" rx="1.5"/><rect class="is-on" x="25" y="1" width="8" height="8" rx="1.5"/>
+      <rect class="is-on" x="1" y="13" width="8" height="8" rx="1.5"/><rect class="is-board" x="13" y="13" width="8" height="8" rx="1.5"/><rect class="is-missing" x="25" y="13" width="8" height="8" rx="1.5"/>
+      <rect class="is-on" x="1" y="25" width="8" height="8" rx="1.5"/><rect class="is-on" x="13" y="25" width="8" height="8" rx="1.5"/><rect class="is-on" x="25" y="25" width="8" height="8" rx="1.5"/>
+    </svg>
+    <p class="kicker">Erreur 404</p>
+    <h1>Il manque une pièce.</h1>
+    <p class="section-lead">La page que vous cherchez n’existe pas ou a été déplacée.</p>
+    <p><a class="btn btn--primary btn--lg" href="./">Retour à l’accueil</a></p>
+  </main>
+</body>
+</html>
