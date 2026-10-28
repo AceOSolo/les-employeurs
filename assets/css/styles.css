@@ -1166,6 +1166,39 @@ text.note-text { font-size: 30px; fill: currentColor; }
 .expert h4 { margin-bottom: 0.25rem; font-size: var(--fs-md); }
 .expert p { font-size: var(--fs-sm); color: var(--color-on-dark-muted); }
 
+/* Board to be : les cinq formats, dans l’ordre de la vie de l’entreprise */
+.formats-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2xs) var(--space-l);
+  margin-bottom: var(--space-m);
+}
+.formats-lead { max-width: 38rem; margin: 0; color: var(--color-on-dark-muted); }
+.formats-note { margin: 0; }
+.formats-note .note-text { color: var(--color-orange-light); }
+.formats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+  gap: var(--space-m) var(--space-l);
+  margin: 0 0 var(--space-2xl);
+  padding: 0;
+  list-style: none;
+}
+.format {
+  padding-top: var(--space-s);
+  border-top: 3px solid var(--color-orange-light);
+}
+.format-name {
+  margin-bottom: 0.35rem;
+  font: 700 var(--fs-lg)/1.1 var(--font-display);
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--color-on-dark);
+}
+.format p:not(.format-name) { font-size: var(--fs-sm); color: var(--color-on-dark-muted); }
+
 .steps {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
