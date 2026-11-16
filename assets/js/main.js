@@ -168,4 +168,45 @@
     }, { rootMargin: '-40% 0px -55% 0px' });
     articles.forEach(function (article) { articleObserver.observe(article); });
   }
+
+  /* ---------- 7. Vidéo « BOARD to be » : grand bouton de lecture et chapitres ---------- */
+  var video = document.getElementById('board-video');
+  if (video) {
+    var playOverlay = document.querySelector('.board-video-play');
+    var chapterButtons = toArray(document.querySelectorAll('.format-play[data-time]'));
+    var revealControls = function () {
+      video.setAttribute('controls', '');
+      if (playOverlay) playOverlay.hidden = true;
+    };
+    var playFrom = function (time) {
+      revealControls();
+      var seek = function () { video.currentTime = time; };
+      if (typeof time === 'number') {
+        if (video.readyState >= 1) seek();
+        else video.addEventListener('loadedmetadata', seek, { once: true });
+      }
+      var playing = video.play();
+      if (playing && playing.catch) playing.catch(function () {});
+    };
+
+    if (playOverlay) {
+      // Sans JavaScript, le lecteur garde ses contrôles natifs.
+      video.removeAttribute('controls');
+      playOverlay.hidden = false;
+      playOverlay.addEventListener('click', function () {
+        playFrom();
+        video.focus();
+      });
+      video.addEventListener('play', revealControls);
+    }
+
+    chapterButtons.forEach(function (button) {
+      button.hidden = false;
+      button.addEventListener('click', function () {
+        var frame = video.closest('.board-video') || video;
+        frame.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'center' });
+        playFrom(parseFloat(button.getAttribute('data-time')) || 0);
+      });
+    });
+  }
 })();

@@ -22,6 +22,8 @@ assets/img/logo.svg        logo autonome, texte vectorisé (pour les usages hors
 assets/img/favicon.svg, apple-touch-icon.png   icônes
 assets/img/og-image.png    image de partage (LinkedIn, WhatsApp, Slack…), 1200 × 630
 assets/img/jean-philippe-barret.jpg / .webp    portrait de la section « Qui sommes-nous »
+assets/img/avatars/        les 9 portraits ronds des avatars en WebP (nom-portrait.webp, 176 px)
+assets/video/              vidéo « BOARD to be » (MP4 H.264/AAC), son image d’attente et ses sous-titres (.vtt)
 CNAME                      domaine personnalisé GitHub Pages (les-employeurs.fr)
 .nojekyll                  désactive Jekyll : GitHub Pages sert les fichiers tels quels
 ```
@@ -93,6 +95,24 @@ La correspondance cycle → pièces est écrite à **trois endroits**, à garder
 2. Le texte de la frise (`.cycle-pieces`).
 3. Les étiquettes « Cycles concernés » de chaque fiche.
 
+### Les avatars (TK-559, TK-573)
+
+Chaque pièce a son avatar : VIBE (QVCT & RSE), CAP (Direction & Stratégie), BUDDY (Ressources Humaines), SAFE (Santé Sécurité), CENT (Finance & Gestion), DEAL (Commerce & Marketing), BYTE (Informatique & Digital), NEGO (Achat & Fournisseurs) et MARC, « Pilote de Succès », sur le Board.
+
+- **Sur le puzzle**, chaque pièce affiche le portrait rond, le nom et la fonction (`.piece-avatar`, `.piece-name`, `.piece-label`). Sur mobile, portrait, nom et libellé court. Le texte alternatif du portrait (« CAP, avatar Direction & Stratégie ») donne son nom au lien ; le nom et la fonction affichés sont donc en `aria-hidden`.
+- **Sur chaque fiche**, `<figure class="fn-avatar">` dans l’en-tête : petit portrait rond cerclé, à droite en face du titre, avec le nom dessous.
+- **Fichiers** : `assets/img/avatars/`, recadrés tête et épaules, visage centré, à partir des PNG 1024 px de référence (TK-573). Pour remplacer un avatar, gardez le nom de fichier et le format carré, et augmentez le `?v=` des `src` dans `index.html`.
+
+### La vidéo « BOARD to be » (TK-573)
+
+Dans la section Board, au-dessus des cinq formats : `<div class="board-video">`, la vidéo à gauche et son texte à droite (l’un sous l’autre sur mobile).
+
+- Lecteur HTML5, `preload="metadata"`, sans lecture automatique ; image d’attente `board-to-be-poster.jpg`, 16/9. Avec JavaScript, un grand bouton orange « Lancer la vidéo » couvre l’image et les contrôles natifs apparaissent au premier clic ; sans JavaScript, le lecteur garde ses contrôles.
+- **Chapitres** : chaque carte de format a un bouton (0:08, 0:21, 0:34, 0:47, 1:00) qui lance la vidéo au passage correspondant (`data-time`, en secondes).
+- Sous-titres `board-to-be.fr.vtt`, calés sur la voix off et placés au-dessus du bandeau « BOARD to be » de l’image. Le texte complet est aussi dans la page (`<details>` « Lire le texte de la vidéo ») et la vidéo est déclarée en JSON-LD (`VideoObject`).
+- Le MP4 a son index en tête de fichier (lecture progressive). Pour le remplacer, gardez le même nom et réexportez en H.264/AAC avec l’option *faststart*.
+- Limite connue, côté vidéo : dans le plan final, DEAL apparaît en double et NEGO est absent.
+
 ### Cas client
 
 La section `#cas-client` présente l’accompagnement de l’Agence Coïncidence en trois temps : situation, actions, résultat. Le mini-puzzle allume les pièces mobilisées : ajoutez ou retirez `class="is-on"` sur les `<use>` de `.cas-map`, et mettez à jour la liste `.cas-pieces`. Pour un second cas client, dupliquez le bloc `<div class="cas">`.
@@ -144,6 +164,10 @@ Ces tracés sont des courbes générées pour avoir l’air faits à la main. Po
 - Pages légales : `mentions-legales.html` et `confidentialite.html`.
 - Référencement : `<title>`, `meta description`, Open Graph et JSON-LD (`ProfessionalService` avec raison sociale, TVA, adresse et fondateur) en tête de `index.html`.
 - Copyright : l’année est écrite en dur dans les pieds de page (`© 2026`).
+
+## Cache des navigateurs
+
+`styles.css` et `main.js` sont appelés avec un numéro de version (`?v=AAAAMMJJx`). Changez-le dans les quatre pages HTML à chaque modification de ces fichiers : sinon, les visiteurs peuvent voir le nouveau HTML avec l’ancien CSS.
 
 ## Modifier la charte
 
