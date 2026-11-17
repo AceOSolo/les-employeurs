@@ -2,14 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://les-employeurs.fr/</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-11-17</lastmod>
+  </url>
+  <url>
+    <loc>https://les-employeurs.fr/diagnostic.html</loc>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://les-employeurs.fr/confidentialite.html</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://les-employeurs.fr/mentions-legales.html</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 </urlset>
