@@ -5,7 +5,7 @@ Site vitrine de **Les Employeurs** (édité par LOGISTEM 2.0) : 9 fonctions supp
 - 100 % statique : HTML, CSS et JavaScript écrits à la main, **sans dépendance ni étape de build**.
 - **Aucune ressource externe** au chargement des pages publiques. Les polices, les icônes, les illustrations et la photo sont servies depuis le site.
 - **Aucun traceur.** Seul l’espace personnel (diagnostics) garde une session de connexion, strictement nécessaire : aucun bandeau de consentement n’est donc nécessaire.
-- **Diagnostics offerts** par pièce, avec compte et historique : comptes et données chez **Neon** (Neon Auth + Data API), voir [Diagnostics et espace personnel](#diagnostics-et-espace-personnel).
+- **Diagnostics offerts** par pièce, avec compte et historique : comptes et données sur **notre propre API PHP/MySQL**, hébergée chez OVH (aucun service tiers), voir [Diagnostics et espace personnel](#diagnostics-et-espace-personnel).
 - Chemins relatifs : le site fonctionne à la racine d’un domaine comme dans un sous-dossier.
 
 ## Arborescence
@@ -22,10 +22,11 @@ assets/css/styles.css      styles ; la charte est en tête de fichier
 assets/js/main.js          enrichissements uniquement (le site reste complet sans JS)
 assets/js/diag-data.js     contenu des diagnostics, généré depuis le catalogue 9 pôles
 assets/js/diag-core.js     calcul des scores, rendu du résultat
-assets/js/compte.js        client Neon Auth + Data API (et mode démo local)
+assets/js/compte.js        client de l’API des comptes (et mode démo local)
 assets/js/auth-ui.js       formulaire de création de compte / connexion
 assets/js/diagnostic.js, espace.js   logique des deux pages
-sql/diagnostics.sql        table, sécurité (RLS) et purge RGPD, à exécuter sur Neon
+serveur/api/               API PHP des comptes et diagnostics, à déposer chez OVH
+serveur/schema.sql         tables MySQL, à importer une fois dans phpMyAdmin
 outils/generer-diagnostics.py   régénère diag-data.js depuis le fichier Excel du catalogue
 assets/fonts/              Bricolage Grotesque et Instrument Sans (.woff2) et leurs licences
 assets/img/logo.svg        logo autonome, texte vectorisé (pour les usages hors site)
@@ -191,21 +192,24 @@ python outils/generer-diagnostics.py chemin/vers/Catalogue_9_poles.xlsx
 
 **Parcours.** `diagnostic.html` (choix de la pièce) → `diagnostic.html?piece=strategie` (questionnaire, une famille par écran) → création du compte ou connexion → enregistrement → `diagnostic.html?id=…` (résultat, comparé au diagnostic précédent de la même pièce). Le diagnostic terminé est gardé dans le navigateur jusqu’à la connexion, même si l’adresse email doit d’abord être confirmée : il est enregistré automatiquement à l’arrivée dans `espace.html`.
 
-**Technique.** Le site reste statique sur GitHub Pages. Les comptes sont gérés par **Neon Auth** et les diagnostics stockés dans Postgres, lus et écrits par la **Neon Data API** avec un jeton par utilisateur. La sécurité est dans la base : chaque utilisateur ne voit que ses lignes (RLS, `sql/diagnostics.sql`). `compte.js` est un client maison d’environ 250 lignes (le SDK officiel pèse 640 Ko).
+**Technique.** Le site reste statique sur GitHub Pages. Les comptes et les diagnostics sont gérés par **notre propre API** en PHP (dossier `serveur/api/`, sans dépendance) et stockés dans une **base MySQL chez OVH** : les données restent chez vous, sans service tiers. Mots de passe chiffrés (`password_hash`), sessions par jeton aléatoire dont seule l’empreinte est stockée, limitation des tentatives, CORS limité au site, scores recalculés par le serveur, chaque compte ne voit que ses diagnostics.
 
-**Mise en service** (une fois) :
+**Mise en service chez OVH** (une fois) :
 
-1. Créer un projet Neon dédié « les-employeurs », région **AWS Europe (Frankfurt)**.
-2. Activer **Neon Auth** : email + mot de passe ; ajouter `https://les-employeurs.fr` aux domaines de confiance.
-3. Activer la **Data API** sur la base, avec Neon Auth comme fournisseur.
-4. Exécuter `sql/diagnostics.sql` dans le SQL Editor, puis rafraîchir le cache de schéma de la Data API.
-5. Renseigner `authUrl` et `dataApiUrl` en tête de `assets/js/compte.js`, changer le numéro de version des scripts, publier.
+1. Espace client OVH › Hébergement › **Bases de données** : créer une base MySQL, puis l’ouvrir dans phpMyAdmin et **importer** `serveur/schema.sql`.
+2. Espace client › Hébergement › **Multisite** : ajouter `api.les-employeurs.fr`, dossier racine `api-les-employeurs`, SSL activé. OVH crée l’entrée DNS si le domaine est chez OVH.
+3. Déposer **le contenu** de `serveur/api/` dans ce dossier (FTP), y compris `.htaccess`.
+4. Copier `config.exemple.php` en `config.php` sur le serveur et le remplir (accès à la base, adresse d’expédition des emails). Ne jamais le mettre dans Git.
+5. Vérifier : `https://api.les-employeurs.fr/?r=me` doit répondre `{"code":"UNAUTHORIZED"}`.
+6. Renseigner `apiUrl: 'https://api.les-employeurs.fr/'` en tête de `assets/js/compte.js`, changer le numéro de version des scripts, publier le site.
 
-Tant que ces deux adresses sont vides, le questionnaire fonctionne mais l’écran de résultat invite à prendre rendez-vous, et `espace.html` annonce une ouverture prochaine.
+Tant que `apiUrl` est vide, le questionnaire fonctionne mais l’écran de résultat invite à prendre rendez-vous, et `espace.html` annonce une ouverture prochaine.
 
-**Tester sans serveur.** En local, ajouter `?demo` à l’adresse (`diagnostic.html?demo`) : comptes et diagnostics sont simulés dans le navigateur. Ce mode est inactif en ligne. Pour en sortir : `localStorage.clear()` dans la console.
+**Emails.** Seul le « mot de passe oublié » envoie un email, par la fonction `mail()` de l’hébergement OVH. L’adresse d’expédition (`mail_from`) doit appartenir à un domaine hébergé chez OVH.
 
-**Purge RGPD.** Une fois par mois : `select public.purge_comptes_inactifs();` dans le SQL Editor (comptes sans connexion depuis 3 ans).
+**Tester en local.** Sans serveur : ajouter `?demo` à l’adresse (`diagnostic.html?demo`), comptes et diagnostics sont simulés dans le navigateur. Avec l’API : lancer MySQL et `php -S 127.0.0.1:8081 -t serveur/api` (avec un `config.php` de test), servir le site sur `http://localhost:8000`, puis ouvrir `diagnostic.html?api=http://127.0.0.1:8081/index.php`. Ces deux modes ne fonctionnent qu’en local. Pour en sortir : `localStorage.clear()` dans la console.
+
+**Purge RGPD.** Automatique : l’API supprime de temps en temps les comptes sans connexion depuis 3 ans, avec leurs diagnostics, ainsi que les sessions expirées.
 
 ## Cache des navigateurs
 
@@ -266,7 +270,7 @@ Toutes les autres informations sont renseignées. Sources :
 | Politique de confidentialité (RGPD, art. 13) | obligatoire dès qu’on reçoit des données (comptes, diagnostics, emails, rendez-vous), en place | `confidentialite.html` |
 | Consentement à la création du compte | case à cocher obligatoire, base légale des diagnostics | `assets/js/auth-ui.js` |
 | Droit à l’effacement | en libre-service dans l’espace (diagnostics, compte) | `espace.html` |
-| Durée de conservation | comptes inactifs 3 ans : purge mensuelle à lancer | `sql/diagnostics.sql` |
+| Durée de conservation | comptes inactifs 3 ans : purge automatique par l’API | `serveur/api/lib.php` |
 | Bandeau cookies | **non nécessaire** : aucun traceur ; la session de l’espace est strictement nécessaire. À revoir si vous ajoutez une mesure d’audience ou intégrez l’agenda dans la page (iframe) | |
 | CGV | **non obligatoires en B2B** et pas à publier. Si vous en avez, vous devez les communiquer à tout client professionnel qui les demande (art. L441-1 du Code de commerce) | |
 | CGU | non obligatoires pour un site vitrine | |

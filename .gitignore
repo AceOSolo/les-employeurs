@@ -1,0 +1,2 @@
+# Configuration de l’API (mot de passe de la base) : jamais dans Git
+serveur/api/config.php

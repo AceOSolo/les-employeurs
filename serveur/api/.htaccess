@@ -1,0 +1,19 @@
+# Les Employeurs · API (hébergement OVH, Apache)
+
+# Seul index.php est appelable : la configuration et la bibliothèque sont protégées
+<FilesMatch "^(config|config\.exemple|lib)\.php$">
+  Require all denied
+</FilesMatch>
+
+# Transmettre l'en-tête Authorization à PHP (souvent retiré par les hébergements mutualisés)
+<IfModule mod_setenvif.c>
+  SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+</IfModule>
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP:Authorization} .
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+
+Options -Indexes
+DirectoryIndex index.php
