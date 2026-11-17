@@ -208,12 +208,9 @@ Le site est publié par **GitHub Pages** directement depuis la branche `main`, �
 
 ## Placeholders restants
 
-| Placeholder | Où | Remarque |
-|---|---|---|
-| `[URL_RDV]` | `index.html` (13 occurrences) | lien de l’outil de prise de rendez-vous, ouvert dans un nouvel onglet |
-| `[OUTIL_RDV]` | `confidentialite.html` | nom de cet outil, déclaré comme sous-traitant |
+Aucun. La prise de rendez-vous pointe vers `https://cal.com/jbarret/15min` (13 liens dans `index.html`), le lien déjà utilisé sur iatop.eu. Cal.com est déclaré comme sous-traitant dans `confidentialite.html`.
 
-Pour les lister : `grep -rn "\[[A-Z_]*\]" --include=*.html .`
+Pour vérifier : `grep -rn "\[[A-Z_]*\]" --include=*.html .`
 
 Toutes les autres informations sont renseignées. Sources :
 - **LOGISTEM 2.0** : API Sirene, BODACC et Société.com, le 23/10/2026.
@@ -238,7 +235,7 @@ Toutes les autres informations sont renseignées. Sources :
 - **Principal** : *fonctions supports externalisées*, ciblé dans le `title`, le H1, le H2 du puzzle, la FAQ et le JSON-LD.
 - **Secondaires**, un par fiche via le titre et le sous-titre `.fn-seo` : *RH externalisées*, *Board externalisé*, *gestion financière externalisée*, *DUERP / prévention des risques*, *démarche RSE / QVCT*, *achats externalisés*, *conseil en stratégie pour dirigeants*, *développement commercial*, *transformation digitale*.
 - **Confiance** : la section « Qui sommes-nous » et le fondateur déclaré dans le JSON-LD (avec son profil LinkedIn) renforcent l’expertise perçue par les moteurs. Le cas client ajoute un exemple concret.
-- **Local** : le siège à Culin (Nord-Isère) est mentionné dans « Qui sommes-nous » et dans le JSON-LD.
+- **Local** : l’adresse de Saint-Quentin-Fallavier (Nord-Isère) figure dans le JSON-LD.
 
 ## Pistes d’amélioration
 
@@ -246,11 +243,11 @@ Toutes les autres informations sont renseignées. Sources :
 
 **Plus tard**, selon vos réponses du 23/10/2026 :
 
-1. **Agenda en lien sortant.** Choisissez l’outil, puis remplacez `[URL_RDV]` et `[OUTIL_RDV]`. Gardez-le en lien sortant : intégré dans la page, il déposerait des cookies et imposerait un bandeau.
+1. **Agenda en lien sortant** (fait : Cal.com). Gardez-le en lien sortant : intégré dans la page, il déposerait des cookies et imposerait un bandeau.
 2. **Adresse email au nom du domaine** (`contact@les-employeurs.fr`), avec SPF, DKIM et DMARC. OVH les configure depuis l’espace client si le domaine y est.
 3. **Google Search Console** : validation par DNS et soumission de `sitemap.xml`.
 4. **Repères de prix**, quand vous serez prêts : mode d’intervention ou fourchette, et une question dans la FAQ.
-5. **Zone d’intervention et Google Business Profile** (siège de Culin).
+5. **Zone d’intervention et Google Business Profile** (Saint-Quentin-Fallavier).
 6. **Ensuite** :
    - vérifier les mots-clés avec de vrais volumes ;
    - créer une page LinkedIn entreprise, à ajouter en `sameAs` dans le JSON-LD ;
