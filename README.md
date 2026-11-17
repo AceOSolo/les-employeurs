@@ -3,20 +3,31 @@
 Site vitrine de **Les Employeurs** (édité par LOGISTEM 2.0) : 9 fonctions supports représentées comme les 9 pièces d’un puzzle, avec le **Board externalisé** en pièce centrale. Hébergement : **GitHub Pages** ; nom de domaine chez **OVH**.
 
 - 100 % statique : HTML, CSS et JavaScript écrits à la main, **sans dépendance ni étape de build**.
-- **Aucune ressource externe** au chargement. Les polices, les icônes, les illustrations et la photo sont servies depuis le site.
-- **Aucun cookie, aucun traceur.** Aucun bandeau de consentement n’est donc nécessaire.
+- **Aucune ressource externe** au chargement des pages publiques. Les polices, les icônes, les illustrations et la photo sont servies depuis le site.
+- **Aucun traceur.** Seul l’espace personnel (diagnostics) garde une session de connexion, strictement nécessaire : aucun bandeau de consentement n’est donc nécessaire.
+- **Diagnostics offerts** par pièce, avec compte et historique : comptes et données sur **notre propre API PHP/MySQL**, hébergée chez OVH (aucun service tiers), voir [Diagnostics et espace personnel](#diagnostics-et-espace-personnel).
 - Chemins relatifs : le site fonctionne à la racine d’un domaine comme dans un sous-dossier.
 
 ## Arborescence
 
 ```
 index.html                 page unique (tout le contenu est dans le HTML)
+diagnostic.html            diagnostic offert : choix de la pièce, questionnaire, résultat
+espace.html                espace personnel : connexion, historique des diagnostics
 mentions-legales.html
 confidentialite.html       politique de confidentialité (RGPD)
 404.html
 robots.txt, sitemap.xml
 assets/css/styles.css      styles ; la charte est en tête de fichier
 assets/js/main.js          enrichissements uniquement (le site reste complet sans JS)
+assets/js/diag-data.js     contenu des diagnostics, généré depuis le catalogue 9 pôles
+assets/js/diag-core.js     calcul des scores, rendu du résultat
+assets/js/compte.js        client de l’API des comptes (et mode démo local)
+assets/js/auth-ui.js       formulaire de création de compte / connexion
+assets/js/diagnostic.js, espace.js   logique des deux pages
+serveur/api/               API PHP des comptes et diagnostics, à déposer chez OVH
+serveur/schema.sql         tables MySQL, à importer une fois dans phpMyAdmin
+outils/generer-diagnostics.py   régénère diag-data.js depuis le fichier Excel du catalogue
 assets/fonts/              Bricolage Grotesque et Instrument Sans (.woff2) et leurs licences
 assets/img/logo.svg        logo autonome, texte vectorisé (pour les usages hors site)
 assets/img/favicon.svg, apple-touch-icon.png   icônes
@@ -49,21 +60,23 @@ Puis ouvrir <http://localhost:8000/>. Sous macOS ou Linux, la commande peut s’
 | 06 | FAQ (6 questions en `<details>` natifs) | `#faq` |
 | 07 | Contact : « Quelle pièce vous manque ? » | `#contact` |
 
-Le menu compte 6 liens (Les 9 fonctions, Le Board, Cas client, Qui sommes-nous, FAQ, Contact). Il se replie en bouton « Menu » sous 1080 px de large. « Travailler ensemble » est accessible par le défilement et le pied de page.
+Le menu compte 7 liens (Les 9 fonctions, Le Board, Cas client, Qui sommes-nous, FAQ, Diagnostic, Contact). Il se replie en bouton « Menu » sous 1080 px de large. « Travailler ensemble » est accessible par le défilement et le pied de page.
 
 ## Le puzzle et sa numérotation en escargot
 
 Les pièces sont numérotées **en escargot**, dans le sens des aiguilles d’une montre depuis le coin haut gauche. Le Board, au centre, ferme la boucle en 09 :
 
 ```
-01 QVCT & RSE             02 Direction & Stratégie   03 Ressources Humaines
-08 Achat & Fournisseurs   09 Board externalisé       04 Santé Sécurité
-07 Informatique & Digital 06 Commerce & Marketing    05 Finance & Gestion
+01 Direction & Stratégie  02 Ressources Humaines     03 Finance & Gestion
+08 Santé Sécurité         09 Board externalisé       04 Commerce & Marketing
+07 QVCT & RSE             06 Achat & Fournisseurs    05 Informatique & Digital
 ```
 
 Les pièces sont écrites dans le HTML **dans cet ordre**, et la touche Tab suit donc l’escargot. Chaque `<li class="puzzle-slot">` est placé dans la grille par son `style="grid-area: ligne / colonne"`. L’animation d’entrée suit le même ordre, le Board en dernier. Sur chaque pièce, `--i` fixe le rang et `--sx` / `--sy` la direction d’arrivée.
 
-Les fiches, le sommaire et le pied de page suivent le même ordre.
+Les fiches, le sommaire, le pied de page, le JSON-LD et les diagnostics suivent le même ordre (aligné sur le catalogue Marc Employeur et l’ordre des avatars).
+
+Les formes des pièces (`<path id="pz-…">` du sprite) dépendent de la **case** et non de la fonction : pour réordonner, on garde la géométrie de chaque case et on renomme les `id`.
 
 ## Modifier les textes
 
@@ -165,9 +178,42 @@ Ces tracés sont des courbes générées pour avoir l’air faits à la main. Po
 - Référencement : `<title>`, `meta description`, Open Graph et JSON-LD (`ProfessionalService` avec raison sociale, TVA, adresse et fondateur) en tête de `index.html`.
 - Copyright : l’année est écrite en dur dans les pieds de page (`© 2026`).
 
+## Diagnostics et espace personnel
+
+Chaque pièce du puzzle propose un **diagnostic offert**. Le visiteur évalue où en est son entreprise sur chaque sous-famille de la pièce (échelle : *Pas encore*, *En réflexion*, *En partie*, *En place*, *Non concerné*). Pour voir le résultat, il **crée un compte**. Son espace garde l’**historique** de tous ses diagnostics, pièce par pièce, pour comparer l’évolution.
+
+**Contenu.** Les familles et sous-familles viennent du catalogue Marc Employeur (`Catalogue_9_poles.xlsx`, page Notion « Catalogue 9 pôles ») : 9 familles × 3 sous-familles par pièce (27 questions), 18 familles pour QVCT & RSE (66 questions), 5 pour le Board (15 questions). Chaque question cite 3 articles du catalogue en exemple. Pour mettre à jour après une modification du catalogue :
+
+```bash
+python outils/generer-diagnostics.py chemin/vers/Catalogue_9_poles.xlsx
+```
+
+**Scores.** Une sous-famille vaut 0 à 3 ; une famille = moyenne ramenée sur 100 ; le score global = moyenne des familles (les « Non concerné » sont exclus). Niveaux : À construire (< 25), En chantier (< 50), Bien engagé (< 75), Solide. Les 3 priorités sont les familles les plus basses sous 75, avec leurs sous-familles les plus faibles.
+
+**Parcours.** `diagnostic.html` (choix de la pièce) → `diagnostic.html?piece=strategie` (questionnaire, une famille par écran) → création du compte ou connexion → enregistrement → `diagnostic.html?id=…` (résultat, comparé au diagnostic précédent de la même pièce). Le diagnostic terminé est gardé dans le navigateur jusqu’à la connexion, même si l’adresse email doit d’abord être confirmée : il est enregistré automatiquement à l’arrivée dans `espace.html`.
+
+**Technique.** Le site reste statique sur GitHub Pages. Les comptes et les diagnostics sont gérés par **notre propre API** en PHP (dossier `serveur/api/`, sans dépendance) et stockés dans une **base MySQL chez OVH** : les données restent chez vous, sans service tiers. Mots de passe chiffrés (`password_hash`), sessions par jeton aléatoire dont seule l’empreinte est stockée, limitation des tentatives, CORS limité au site, scores recalculés par le serveur, chaque compte ne voit que ses diagnostics.
+
+**Mise en service chez OVH** (une fois) :
+
+1. Espace client OVH › Hébergement › **Bases de données** : créer une base MySQL, puis l’ouvrir dans phpMyAdmin et **importer** `serveur/schema.sql`.
+2. Espace client › Hébergement › **Multisite** : ajouter `api.les-employeurs.fr`, dossier racine `api-les-employeurs`, SSL activé. OVH crée l’entrée DNS si le domaine est chez OVH.
+3. Déposer **le contenu** de `serveur/api/` dans ce dossier (FTP), y compris `.htaccess`.
+4. Copier `config.exemple.php` en `config.php` sur le serveur et le remplir (accès à la base, adresse d’expédition des emails). Ne jamais le mettre dans Git.
+5. Vérifier : `https://api.les-employeurs.fr/?r=me` doit répondre `{"code":"UNAUTHORIZED"}`.
+6. Renseigner `apiUrl: 'https://api.les-employeurs.fr/'` en tête de `assets/js/compte.js`, changer le numéro de version des scripts, publier le site.
+
+Tant que `apiUrl` est vide, le questionnaire fonctionne mais l’écran de résultat invite à prendre rendez-vous, et `espace.html` annonce une ouverture prochaine.
+
+**Emails.** Seul le « mot de passe oublié » envoie un email, par la fonction `mail()` de l’hébergement OVH. L’adresse d’expédition (`mail_from`) doit appartenir à un domaine hébergé chez OVH.
+
+**Tester en local.** Sans serveur : ajouter `?demo` à l’adresse (`diagnostic.html?demo`), comptes et diagnostics sont simulés dans le navigateur. Avec l’API : lancer MySQL et `php -S 127.0.0.1:8081 -t serveur/api` (avec un `config.php` de test), servir le site sur `http://localhost:8000`, puis ouvrir `diagnostic.html?api=http://127.0.0.1:8081/index.php`. Ces deux modes ne fonctionnent qu’en local. Pour en sortir : `localStorage.clear()` dans la console.
+
+**Purge RGPD.** Automatique : l’API supprime de temps en temps les comptes sans connexion depuis 3 ans, avec leurs diagnostics, ainsi que les sessions expirées.
+
 ## Cache des navigateurs
 
-`styles.css` et `main.js` sont appelés avec un numéro de version (`?v=AAAAMMJJx`). Changez-le dans les quatre pages HTML à chaque modification de ces fichiers : sinon, les visiteurs peuvent voir le nouveau HTML avec l’ancien CSS.
+`styles.css` et `main.js` sont appelés avec un numéro de version (`?v=AAAAMMJJx`). Changez-le dans toutes les pages HTML (six pages, y compris `diagnostic.html` et `espace.html`, qui versionnent aussi leurs scripts) à chaque modification de ces fichiers : sinon, les visiteurs peuvent voir le nouveau HTML avec l’ancien CSS.
 
 ## Modifier la charte
 
@@ -221,8 +267,11 @@ Toutes les autres informations sont renseignées. Sources :
 | Élément | Statut | Où |
 |---|---|---|
 | Mentions légales (art. 1-1 LCEN, depuis la loi SREN de 2024) | obligatoires, en place | `mentions-legales.html` |
-| Politique de confidentialité (RGPD, art. 13) | obligatoire dès qu’on reçoit des données (emails, rendez-vous), en place | `confidentialite.html` |
-| Bandeau cookies | **non nécessaire** : aucun cookie ni traceur. À revoir si vous ajoutez une mesure d’audience ou intégrez l’agenda dans la page (iframe) | |
+| Politique de confidentialité (RGPD, art. 13) | obligatoire dès qu’on reçoit des données (comptes, diagnostics, emails, rendez-vous), en place | `confidentialite.html` |
+| Consentement à la création du compte | case à cocher obligatoire, base légale des diagnostics | `assets/js/auth-ui.js` |
+| Droit à l’effacement | en libre-service dans l’espace (diagnostics, compte) | `espace.html` |
+| Durée de conservation | comptes inactifs 3 ans : purge automatique par l’API | `serveur/api/lib.php` |
+| Bandeau cookies | **non nécessaire** : aucun traceur ; la session de l’espace est strictement nécessaire. À revoir si vous ajoutez une mesure d’audience ou intégrez l’agenda dans la page (iframe) | |
 | CGV | **non obligatoires en B2B** et pas à publier. Si vous en avez, vous devez les communiquer à tout client professionnel qui les demande (art. L441-1 du Code de commerce) | |
 | CGU | non obligatoires pour un site vitrine | |
 | Médiateur de la consommation | uniquement en B2C, non concerné | |
