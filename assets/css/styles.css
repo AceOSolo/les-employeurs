@@ -928,7 +928,7 @@ text.note-text { font-size: 30px; fill: currentColor; }
 .piece.is-dimmed .piece-avatar { filter: grayscale(1); opacity: 0.55; }
 .piece--board.is-dimmed .piece-avatar { filter: none; opacity: 1; }
 
-/* Assemblage : les pièces arrivent écartées et s’emboîtent en escargot, le Board en dernier
+/* Assemblage : les pièces arrivent écartées et s’emboîtent dans l’ordre de l’horloge, le Board en dernier
    (classe ajoutée par main.js ; ordre --i et écarts --sx/--sy portés par chaque pièce dans le HTML) */
 .puzzle.is-scattered .piece {
   opacity: 0;
@@ -1681,7 +1681,7 @@ text.note-text { font-size: 30px; fill: currentColor; }
 .contact-art use.is-slot { fill: none; stroke: rgb(247 244 238 / 0.7); stroke-dasharray: 5 6; }
 .contact-art use.is-missing { fill: var(--color-on-dark); stroke: none; }
 .contact-art-float {
-  transform: translate(46px, -70px) rotate(9deg);
+  transform: translate(-34px, -58px) rotate(-9deg);
   transform-box: fill-box;
   transform-origin: center;
   filter: drop-shadow(0 18px 18px rgb(0 0 0 / 0.3));
@@ -1690,8 +1690,8 @@ text.note-text { font-size: 30px; fill: currentColor; }
   .contact-art-float { animation: float 5s ease-in-out infinite; }
 }
 @keyframes float {
-  0%, 100% { transform: translate(46px, -70px) rotate(9deg); }
-  50% { transform: translate(46px, -82px) rotate(6deg); }
+  0%, 100% { transform: translate(-34px, -58px) rotate(-9deg); }
+  50% { transform: translate(-34px, -70px) rotate(-6deg); }
 }
 
 /* ==========================================================================

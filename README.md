@@ -62,17 +62,17 @@ Puis ouvrir <http://localhost:8000/>. Sous macOS ou Linux, la commande peut s’
 
 Le menu compte 7 liens (Les 9 fonctions, Le Board, Cas client, Qui sommes-nous, FAQ, Diagnostic, Contact). Il se replie en bouton « Menu » sous 1080 px de large. « Travailler ensemble » est accessible par le défilement et le pied de page.
 
-## Le puzzle et sa numérotation en escargot
+## Le puzzle et sa numérotation en horloge
 
-Les pièces sont numérotées **en escargot**, dans le sens des aiguilles d’une montre depuis le coin haut gauche. Le Board, au centre, ferme la boucle en 09 :
+Les pièces sont numérotées **comme une horloge** : 01 à midi (haut centre), puis dans le sens des aiguilles d’une montre, jusqu’à 08 en haut à gauche. Le Board, au centre, ferme la boucle en 09 :
 
 ```
-01 Direction & Stratégie  02 Ressources Humaines     03 Finance & Gestion
-08 Santé Sécurité         09 Board externalisé       04 Commerce & Marketing
-07 QVCT & RSE             06 Achat & Fournisseurs    05 Informatique & Digital
+08 Santé Sécurité         01 Direction & Stratégie   02 Ressources Humaines
+07 QVCT & RSE             09 Board externalisé       03 Finance & Gestion
+06 Achat & Fournisseurs   05 Informatique & Digital  04 Commerce & Marketing
 ```
 
-Les pièces sont écrites dans le HTML **dans cet ordre**, et la touche Tab suit donc l’escargot. Chaque `<li class="puzzle-slot">` est placé dans la grille par son `style="grid-area: ligne / colonne"`. L’animation d’entrée suit le même ordre, le Board en dernier. Sur chaque pièce, `--i` fixe le rang et `--sx` / `--sy` la direction d’arrivée.
+Les pièces sont écrites dans le HTML **dans l’ordre 01 → 09**, et la touche Tab suit donc l’horloge. Chaque `<li class="puzzle-slot">` est placé dans la grille par son `style="grid-area: ligne / colonne"`. L’animation d’entrée suit le même ordre, le Board en dernier. Sur chaque pièce, `--i` fixe le rang et `--sx` / `--sy` la direction d’arrivée.
 
 Les fiches, le sommaire, le pied de page, le JSON-LD et les diagnostics suivent le même ordre (aligné sur le catalogue Marc Employeur et l’ordre des avatars).
 
@@ -155,7 +155,7 @@ Les modificateurs `.mk--board` (orange clair) et `.mk--soft` (sarcelle clair) se
 
 **Annotations et dessins.**
 - **Hero** : flèche « les 9 pièces, juste en dessous ».
-- **Puzzle** (écrans ≥ 1240 px) : « cliquez sur une pièce », et la spirale de l’escargot.
+- **Puzzle** (écrans ≥ 1240 px) : « cliquez sur une pièce », et la spirale qui mène de 01 (à midi) au Board.
 - **Frise** : ligne de temps griffonnée, et un cercle qui se dessine autour du cycle choisi (`.cycle-ink`).
 - **Board** : cercle autour de la pièce centrale, « cinq experts, une seule table ».
 - **Travailler ensemble** et **cas client** : flèche « et vous pouvez ajouter des pièces en chemin » et grilles hachurées (`.sketch-grid`). Une case hachurée = une pièce confiée, en orange pour le Board.
@@ -321,7 +321,7 @@ Toutes les autres informations sont renseignées. Sources :
 Site servi en local et piloté dans Chrome (Puppeteer) : 68 contrôles, tous réussis.
 
 - **Affichage** à 360, 768 et 1280 px (et vérification visuelle à 900 et 1100 px) : pas de défilement horizontal, texte contenu dans le cœur de chaque pièce.
-- **Puzzle** : numérotation en escargot, formes dans leur case, ordre de tabulation et fiches dans l’ordre 01 → 09.
+- **Puzzle** : numérotation en horloge (01 à midi, 08 en haut à gauche), formes dans leur case, ordre de tabulation et fiches dans l’ordre 01 → 09.
 - **Nouvelles sections** : cas client et « Qui sommes-nous » en place, sans aucune mention santé-sécurité dans le portrait. Photo chargée (WebP), menu actif correct, y compris en haut de page.
 - **Tracés « feutre »** : les 22 tracés sont cachés au chargement et tous dessinés après défilement. Ils sont visibles d’emblée sans JavaScript. Ils ne créent aucun défilement horizontal, même sur mobile.
 - **Réseau** : aucune erreur, aucune ressource en échec, aucune requête externe. Les polices auto-hébergées sont chargées.
